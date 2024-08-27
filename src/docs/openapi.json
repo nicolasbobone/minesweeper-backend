@@ -1,0 +1,2832 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "FlickBox",
+    "version": "1.0.0",
+    "description": "API documentation for FlickBox",
+    "contact": {
+      "name": "API Support",
+      "email": "nicolasbobone@gmail.com"
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "summary": "User register",
+        "tags": [
+          "AUTH"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "firstName": {
+                    "type": "string",
+                    "minLength": 3,
+                    "description": "Nombre del usuario",
+                    "example": "Jaime"
+                  },
+                  "lastName": {
+                    "type": "string",
+                    "minLength": 3,
+                    "description": "Apellido del usuario",
+                    "example": "Fulano"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "Email del usuario",
+                    "example": "jaimefulano@gmail.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 6,
+                    "description": "Contraseña del usuario",
+                    "example": "contraseña.de.jaime"
+                  }
+                },
+                "required": [
+                  "firstName",
+                  "lastName",
+                  "email",
+                  "password"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User successfully registered",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": false,
+                  "data": {
+                    "id": 1,
+                    "email": "jaimefulano@gmail.com",
+                    "firstName": "Jaime",
+                    "lastName": "Fulano",
+                    "createdAt": "2024-07-21T15:49:08.551Z",
+                    "updatedAt": "2024-07-21T15:49:08.551Z"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or Database error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Validation error",
+                  "description": [
+                    {
+                      "path": [
+                        "field"
+                      ],
+                      "message": "Expected type, received type"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User already exists",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "User already exists"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "User login",
+        "tags": [
+          "AUTH"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "Email del usuario",
+                    "example": "jaimefulano@gmail.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 6,
+                    "description": "Contraseña del usuario",
+                    "example": "contraseña.de.jaime"
+                  }
+                },
+                "required": [
+                  "email",
+                  "password"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User successfully logged in",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": false,
+                  "data": {
+                    "user": {
+                      "id": 1,
+                      "email": "jaimefulano@gmail.com",
+                      "firstName": "Jaime",
+                      "lastName": "Fulano",
+                      "createdAt": "2024-07-21T02:54:16.798Z",
+                      "updatedAt": "2024-07-21T02:54:16.798Z"
+                    },
+                    "token": "token"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or Database error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Validation error",
+                  "description": [
+                    {
+                      "path": [
+                        "field"
+                      ],
+                      "message": "Expected type, received type"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User does not exist or Incorrect credentials",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Incorrect credentials"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/category": {
+      "get": {
+        "summary": "Get all categories",
+        "tags": [
+          "CATEGORY"
+        ],
+        "responses": {
+          "200": {
+            "description": "Categories successfully retrieved",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": false,
+                  "data": [
+                    {
+                      "id": 1,
+                      "name": "LIBROS",
+                      "createdAt": "2024-07-20T08:22:57.459Z",
+                      "updatedAt": "2024-07-20T08:22:57.459Z"
+                    },
+                    {
+                      "id": 2,
+                      "name": "COMPUTADORAS",
+                      "createdAt": "2024-07-21T08:22:57.459Z",
+                      "updatedAt": "2024-07-21T08:22:57.459Z"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Database error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Database error",
+                  "description": "Failed to fetch all categories"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "No token provided, Invalid token or Token has expired"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Register a category",
+        "tags": [
+          "CATEGORY"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 3,
+                    "description": "Nombre de la categoría",
+                    "example": "Libros"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Descripción de la categoría",
+                    "example": "Recomendación de libros"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Category successfully registered",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": false,
+                  "data": {
+                    "id": 1,
+                    "name": "LIBROS",
+                    "createdAt": "2024-07-20T08:22:57.459Z",
+                    "updatedAt": "2024-07-20T08:22:57.459Z"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or Database error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Validation error",
+                  "description": [
+                    {
+                      "path": [
+                        "field"
+                      ],
+                      "message": "Expected type, received type"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "No token provided, Invalid token or Token has expired"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/category/{id}": {
+      "get": {
+        "summary": "Get a category",
+        "tags": [
+          "CATEGORY"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Id de la categoría",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Id de la categoría",
+              "example": "1"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Category successfully retrieved",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": false,
+                  "data": {
+                    "id": 1,
+                    "name": "LIBROS",
+                    "createdAt": "2024-07-20T08:22:57.459Z",
+                    "updatedAt": "2024-07-20T08:22:57.459Z"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or Database error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Validation error",
+                  "description": [
+                    {
+                      "path": [
+                        "field"
+                      ],
+                      "message": "Expected type, received type"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "No token provided, Invalid token or Token has expired"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a category",
+        "tags": [
+          "CATEGORY"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Id del cliente",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Id del cliente",
+              "example": "1"
+            },
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 3,
+                    "description": "Descripción de la categoría",
+                    "example": "Recomendación de libros"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Descripción de la categoría",
+                    "example": "Recomendación de libros"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Category successfully updated",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": false,
+                  "data": {
+                    "id": 1,
+                    "name": "LIBROS",
+                    "createdAt": "2024-07-20T08:22:57.459Z",
+                    "updatedAt": "2024-07-20T08:22:57.459Z"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or Database error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Validation error",
+                  "description": [
+                    {
+                      "path": [
+                        "field"
+                      ],
+                      "message": "Expected type, received type"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "No token provided, Invalid token or Token has expired"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a category",
+        "tags": [
+          "CATEGORY"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Id de la categoría",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Id de la categoría",
+              "example": "1"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Category successfully deleted",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": false,
+                  "data": {
+                    "id": 1,
+                    "name": "LIBROS",
+                    "createdAt": "2024-07-20T08:22:57.459Z",
+                    "updatedAt": "2024-07-20T08:22:57.459Z"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or Database error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Validation error",
+                  "description": [
+                    {
+                      "path": [
+                        "field"
+                      ],
+                      "message": "Expected type, received type"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "No token provided, Invalid token or Token has expired"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/product": {
+      "get": {
+        "summary": "Get all products",
+        "tags": [
+          "PRODUCT"
+        ],
+        "responses": {
+          "200": {
+            "description": "Products successfully retrieved",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": false,
+                  "data": [
+                    {
+                      "id": 1,
+                      "name": "Clean code JS",
+                      "description": "Mejora tu código con este gran libro.",
+                      "sku": "19414ea4-879e-4213-a182-8774f21a01c6",
+                      "price": 100,
+                      "categoryId": 1,
+                      "createdAt": "2024-08-10T00:14:57.023Z",
+                      "updatedAt": "2024-08-10T00:14:57.023Z",
+                      "category": {
+                        "id": 1,
+                        "name": "LIBROS",
+                        "description": null,
+                        "createdAt": "2024-08-10T00:14:44.355Z",
+                        "updatedAt": "2024-08-10T00:14:44.355Z"
+                      }
+                    },
+                    {
+                      "id": 2,
+                      "name": "MacBook Pro",
+                      "description": "Computadora portátil",
+                      "sku": "835df238-b19e-4cd4-aa3b-d7c3f74ac779",
+                      "price": 100,
+                      "categoryId": 2,
+                      "createdAt": "2024-08-10T04:33:13.700Z",
+                      "updatedAt": "2024-08-10T04:33:13.700Z",
+                      "category": {
+                        "id": 1,
+                        "name": "COMPUTADORAS",
+                        "description": null,
+                        "createdAt": "2024-08-10T00:14:44.355Z",
+                        "updatedAt": "2024-08-10T00:14:44.355Z"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Database error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Database error",
+                  "description": "Failed to fetch all products"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "No token provided, Invalid token or Token has expired"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Register a product",
+        "tags": [
+          "PRODUCT"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 3,
+                    "description": "Nombre del producto",
+                    "example": "Clean code JS"
+                  },
+                  "price": {
+                    "type": "number",
+                    "minimum": 0,
+                    "description": "Precio del producto",
+                    "example": 100
+                  },
+                  "categoryId": {
+                    "type": "number",
+                    "minimum": 1,
+                    "description": "Id de la categoría del producto",
+                    "example": 1
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Descripción del producto",
+                    "example": "Mejora tu código con este gran libro."
+                  }
+                },
+                "required": [
+                  "name",
+                  "price",
+                  "categoryId",
+                  "description"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Products successfully registered",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": false,
+                  "data": {
+                    "id": 5,
+                    "name": "Clean code JS",
+                    "description": "Mejora tu código con este gran libro.",
+                    "sku": "835df238-b19e-4cd4-aa3b-d7c3f74ac779",
+                    "price": 100,
+                    "categoryId": 1,
+                    "createdAt": "2024-08-10T04:33:13.700Z",
+                    "updatedAt": "2024-08-10T04:33:13.700Z",
+                    "category": {
+                      "id": 1,
+                      "name": "LIBROS",
+                      "description": null,
+                      "createdAt": "2024-08-10T00:14:44.355Z",
+                      "updatedAt": "2024-08-10T00:14:44.355Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or Database error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Validation error",
+                  "description": [
+                    {
+                      "path": [
+                        "field"
+                      ],
+                      "message": "Expected type, received type"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "No token provided, Invalid token or Token has expired"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/product/{id}": {
+      "get": {
+        "summary": "Get a product",
+        "tags": [
+          "PRODUCT"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Id del producto",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Id del producto",
+              "example": "1"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product successfully retrieved",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": false,
+                  "data": {
+                    "id": 5,
+                    "name": "Clean code JS",
+                    "description": "Mejora tu código con este gran libro.",
+                    "sku": "835df238-b19e-4cd4-aa3b-d7c3f74ac779",
+                    "price": 100,
+                    "categoryId": 1,
+                    "createdAt": "2024-08-10T04:33:13.700Z",
+                    "updatedAt": "2024-08-10T04:33:13.700Z",
+                    "category": {
+                      "id": 1,
+                      "name": "LIBROS",
+                      "description": null,
+                      "createdAt": "2024-08-10T00:14:44.355Z",
+                      "updatedAt": "2024-08-10T00:14:44.355Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or Database error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Validation error",
+                  "description": [
+                    {
+                      "path": [
+                        "field"
+                      ],
+                      "message": "Expected type, received type"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "No token provided, Invalid token or Token has expired"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a product",
+        "tags": [
+          "PRODUCT"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Id del producto",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Id del producto",
+              "example": "1"
+            },
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 3,
+                    "description": "Nombre del producto",
+                    "example": "Clean code JS"
+                  },
+                  "price": {
+                    "type": "number",
+                    "minimum": 0,
+                    "description": "Precio del producto",
+                    "example": 100
+                  },
+                  "categoryId": {
+                    "type": "number",
+                    "minimum": 1,
+                    "description": "Id de la categoría del producto",
+                    "example": 1
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Descripción del producto",
+                    "example": "Mejora tu código con este gran libro."
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Product successfully updated",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": false,
+                  "data": {
+                    "id": 5,
+                    "name": "Clean code JS",
+                    "description": "Mejora tu código con este gran libro.",
+                    "sku": "835df238-b19e-4cd4-aa3b-d7c3f74ac779",
+                    "price": 100,
+                    "categoryId": 1,
+                    "createdAt": "2024-08-10T04:33:13.700Z",
+                    "updatedAt": "2024-08-11T04:33:13.700Z",
+                    "category": {
+                      "id": 1,
+                      "name": "LIBROS",
+                      "description": null,
+                      "createdAt": "2024-08-10T00:14:44.355Z",
+                      "updatedAt": "2024-08-10T00:14:44.355Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or Database error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Validation error",
+                  "description": [
+                    {
+                      "path": [
+                        "field"
+                      ],
+                      "message": "Expected type, received type"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "No token provided, Invalid token or Token has expired"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a product",
+        "tags": [
+          "PRODUCT"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Id del producto",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Id del producto",
+              "example": "1"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product successfully deleted",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": false,
+                  "data": {
+                    "id": 5,
+                    "name": "Clean code JS",
+                    "description": "Mejora tu código con este gran libro.",
+                    "sku": "835df238-b19e-4cd4-aa3b-d7c3f74ac779",
+                    "price": 100,
+                    "categoryId": 1,
+                    "createdAt": "2024-08-10T04:33:13.700Z",
+                    "updatedAt": "2024-08-10T04:33:13.700Z",
+                    "category": {
+                      "id": 1,
+                      "name": "LIBROS",
+                      "description": null,
+                      "createdAt": "2024-08-10T00:14:44.355Z",
+                      "updatedAt": "2024-08-11T00:14:44.355Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or Database error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Validation error",
+                  "description": [
+                    {
+                      "path": [
+                        "field"
+                      ],
+                      "message": "Expected type, received type"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "No token provided, Invalid token or Token has expired"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cart": {
+      "get": {
+        "summary": "Get all carts",
+        "tags": [
+          "CART"
+        ],
+        "responses": {
+          "200": {
+            "description": "Carts successfully retrieved",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": false,
+                  "data": [
+                    {
+                      "id": 1,
+                      "userId": 1,
+                      "status": "pending",
+                      "createdAt": "2024-08-10T20:58:05.507Z",
+                      "updatedAt": "2024-08-10T20:58:05.507Z",
+                      "products": [
+                        {
+                          "id": 1,
+                          "productId": 1,
+                          "cartId": 1,
+                          "quantity": 1,
+                          "createdAt": "2024-08-10T20:59:50.974Z",
+                          "updatedAt": "2024-08-10T20:59:50.974Z",
+                          "product": {
+                            "id": 1,
+                            "name": "Clean code JS",
+                            "description": "Mejora tu código con este gran libro.",
+                            "sku": "7a26c0a2-8cdb-4368-8373-c5c27debbd53",
+                            "price": 100,
+                            "categoryId": 1,
+                            "createdAt": "2024-08-10T21:49:26.804Z",
+                            "updatedAt": "2024-08-10T21:49:26.804Z"
+                          }
+                        },
+                        {
+                          "id": 2,
+                          "productId": 2,
+                          "cartId": 1,
+                          "quantity": 2,
+                          "createdAt": "2024-08-10T21:51:57.586Z",
+                          "updatedAt": "2024-08-10T21:51:57.586Z",
+                          "product": {
+                            "id": 2,
+                            "name": "MacBook Pro",
+                            "description": "La mejor computadora del mercado.",
+                            "sku": "cec21f32-58b3-41d9-bf1a-1af049ac0560",
+                            "price": 2000,
+                            "categoryId": 2,
+                            "createdAt": "2024-08-10T22:08:36.653Z",
+                            "updatedAt": "2024-08-10T22:08:36.653Z"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "id": 2,
+                      "userId": 1,
+                      "status": "completed",
+                      "createdAt": "2024-08-11T17:07:26.277Z",
+                      "updatedAt": "2024-08-11T17:07:26.277Z",
+                      "products": [
+                        {
+                          "id": 3,
+                          "productId": 2,
+                          "cartId": 2,
+                          "quantity": 3,
+                          "createdAt": "2024-08-11T17:08:13.110Z",
+                          "updatedAt": "2024-08-11T17:08:13.110Z",
+                          "product": {
+                            "id": 2,
+                            "name": "Macbook Pro",
+                            "description": "La mejor computadora del mercado.",
+                            "sku": "cec21f32-58b3-41d9-bf1a-1af049ac0560",
+                            "price": 2000,
+                            "categoryId": 2,
+                            "createdAt": "2024-08-10T22:08:36.653Z",
+                            "updatedAt": "2024-08-10T22:08:36.653Z"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "id": 3,
+                      "userId": 1,
+                      "status": "canceled",
+                      "createdAt": "2024-08-11T17:07:41.042Z",
+                      "updatedAt": "2024-08-11T17:07:41.042Z",
+                      "products": []
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Database error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Database error",
+                  "description": "Failed to fetch all carts"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "No token provided, Invalid token or Token has expired"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Register a cart",
+        "tags": [
+          "CART"
+        ],
+        "responses": {
+          "201": {
+            "description": "Carts successfully registered",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": false,
+                  "data": {
+                    "id": 1,
+                    "userId": 1,
+                    "status": "pending",
+                    "createdAt": "2024-08-10T20:58:05.507Z",
+                    "updatedAt": "2024-08-10T20:58:05.507Z",
+                    "products": [
+                      {
+                        "id": 1,
+                        "productId": 1,
+                        "cartId": 1,
+                        "quantity": 1,
+                        "createdAt": "2024-08-10T20:59:50.974Z",
+                        "updatedAt": "2024-08-10T20:59:50.974Z",
+                        "product": {
+                          "id": 1,
+                          "name": "Clean code JS",
+                          "description": "Mejora tu código con este gran libro.",
+                          "sku": "7a26c0a2-8cdb-4368-8373-c5c27debbd53",
+                          "price": 100,
+                          "categoryId": 1,
+                          "createdAt": "2024-08-10T21:49:26.804Z",
+                          "updatedAt": "2024-08-10T21:49:26.804Z"
+                        }
+                      },
+                      {
+                        "id": 2,
+                        "productId": 2,
+                        "cartId": 1,
+                        "quantity": 2,
+                        "createdAt": "2024-08-10T21:51:57.586Z",
+                        "updatedAt": "2024-08-10T21:51:57.586Z",
+                        "product": {
+                          "id": 2,
+                          "name": "MacBook Pro",
+                          "description": "La mejor computadora del mercado.",
+                          "sku": "cec21f32-58b3-41d9-bf1a-1af049ac0560",
+                          "price": 2000,
+                          "categoryId": 2,
+                          "createdAt": "2024-08-10T22:08:36.653Z",
+                          "updatedAt": "2024-08-10T22:08:36.653Z"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or Database error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Validation error",
+                  "description": [
+                    {
+                      "path": [
+                        "field"
+                      ],
+                      "message": "Expected type, received type"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "No token provided, Invalid token or Token has expired"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cart/pending": {
+      "get": {
+        "summary": "Get a pending cart",
+        "tags": [
+          "CART"
+        ],
+        "responses": {
+          "200": {
+            "description": "Cart successfully retrieved",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": false,
+                  "data": {
+                    "id": 1,
+                    "userId": 1,
+                    "status": "pending",
+                    "createdAt": "2024-08-10T20:58:05.507Z",
+                    "updatedAt": "2024-08-10T20:58:05.507Z",
+                    "products": [
+                      {
+                        "productId": 1,
+                        "cartId": 1,
+                        "quantity": 1,
+                        "createdAt": "2024-08-10T20:59:50.974Z",
+                        "updatedAt": "2024-08-10T20:59:50.974Z",
+                        "product": {
+                          "id": 1,
+                          "name": "Clean code JS",
+                          "description": "Mejora tu código con este gran libro.",
+                          "sku": "7a26c0a2-8cdb-4368-8373-c5c27debbd53",
+                          "price": 100,
+                          "categoryId": 1,
+                          "createdAt": "2024-08-10T21:49:26.804Z",
+                          "updatedAt": "2024-08-10T21:49:26.804Z"
+                        }
+                      },
+                      {
+                        "productId": 2,
+                        "cartId": 1,
+                        "quantity": 2,
+                        "createdAt": "2024-08-10T21:51:57.586Z",
+                        "updatedAt": "2024-08-10T21:51:57.586Z",
+                        "product": {
+                          "id": 2,
+                          "name": "MacBook Pro",
+                          "description": "La mejor computadora del mercado.",
+                          "sku": "cec21f32-58b3-41d9-bf1a-1af049ac0560",
+                          "price": 2000,
+                          "categoryId": 2,
+                          "createdAt": "2024-08-10T22:08:36.653Z",
+                          "updatedAt": "2024-08-10T22:08:36.653Z"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or Database error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Validation error",
+                  "description": [
+                    {
+                      "path": [
+                        "field"
+                      ],
+                      "message": "Expected type, received type"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "No token provided, Invalid token or Token has expired"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cart/{id}": {
+      "get": {
+        "summary": "Get a cart",
+        "tags": [
+          "CART"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Id del carrito",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Id del carrito",
+              "example": "1"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cart successfully retrieved",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": false,
+                  "data": {
+                    "id": 1,
+                    "userId": 1,
+                    "status": "pending",
+                    "createdAt": "2024-08-10T20:58:05.507Z",
+                    "updatedAt": "2024-08-10T20:58:05.507Z",
+                    "products": [
+                      {
+                        "id": 1,
+                        "productId": 1,
+                        "cartId": 1,
+                        "quantity": 1,
+                        "createdAt": "2024-08-10T20:59:50.974Z",
+                        "updatedAt": "2024-08-10T20:59:50.974Z",
+                        "product": {
+                          "id": 1,
+                          "name": "Clean code JS",
+                          "description": "Mejora tu código con este gran libro.",
+                          "sku": "7a26c0a2-8cdb-4368-8373-c5c27debbd53",
+                          "price": 100,
+                          "categoryId": 1,
+                          "createdAt": "2024-08-10T21:49:26.804Z",
+                          "updatedAt": "2024-08-10T21:49:26.804Z"
+                        }
+                      },
+                      {
+                        "id": 2,
+                        "productId": 2,
+                        "cartId": 1,
+                        "quantity": 2,
+                        "createdAt": "2024-08-10T21:51:57.586Z",
+                        "updatedAt": "2024-08-10T21:51:57.586Z",
+                        "product": {
+                          "id": 2,
+                          "name": "MacBook Pro",
+                          "description": "La mejor computadora del mercado.",
+                          "sku": "cec21f32-58b3-41d9-bf1a-1af049ac0560",
+                          "price": 2000,
+                          "categoryId": 2,
+                          "createdAt": "2024-08-10T22:08:36.653Z",
+                          "updatedAt": "2024-08-10T22:08:36.653Z"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or Database error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Validation error",
+                  "description": [
+                    {
+                      "path": [
+                        "field"
+                      ],
+                      "message": "Expected type, received type"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "No token provided, Invalid token or Token has expired"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a cart",
+        "tags": [
+          "CART"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Id del carrito",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Id del carrito",
+              "example": "1"
+            },
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 3,
+                    "description": "Nombre del producto",
+                    "example": "Clean code JS"
+                  },
+                  "price": {
+                    "type": "number",
+                    "minimum": 0,
+                    "description": "Precio del producto",
+                    "example": 100
+                  },
+                  "categoryId": {
+                    "type": "number",
+                    "minimum": 1,
+                    "description": "Id de la categoría del producto",
+                    "example": 1
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Descripción del producto",
+                    "example": "Mejora tu código con este gran libro."
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Cart successfully updated",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": false,
+                  "data": {
+                    "id": 1,
+                    "userId": 1,
+                    "status": "pending",
+                    "createdAt": "2024-08-10T20:58:05.507Z",
+                    "updatedAt": "2024-08-10T20:58:05.507Z",
+                    "products": [
+                      {
+                        "id": 1,
+                        "productId": 1,
+                        "cartId": 1,
+                        "quantity": 1,
+                        "createdAt": "2024-08-10T20:59:50.974Z",
+                        "updatedAt": "2024-08-10T20:59:50.974Z",
+                        "product": {
+                          "id": 1,
+                          "name": "Clean code JS",
+                          "description": "Mejora tu código con este gran libro.",
+                          "sku": "7a26c0a2-8cdb-4368-8373-c5c27debbd53",
+                          "price": 100,
+                          "categoryId": 1,
+                          "createdAt": "2024-08-10T21:49:26.804Z",
+                          "updatedAt": "2024-08-10T21:49:26.804Z"
+                        }
+                      },
+                      {
+                        "id": 2,
+                        "productId": 2,
+                        "cartId": 1,
+                        "quantity": 2,
+                        "createdAt": "2024-08-10T21:51:57.586Z",
+                        "updatedAt": "2024-08-10T21:51:57.586Z",
+                        "product": {
+                          "id": 2,
+                          "name": "MacBook Pro",
+                          "description": "La mejor computadora del mercado.",
+                          "sku": "cec21f32-58b3-41d9-bf1a-1af049ac0560",
+                          "price": 2000,
+                          "categoryId": 2,
+                          "createdAt": "2024-08-10T22:08:36.653Z",
+                          "updatedAt": "2024-08-10T22:08:36.653Z"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or Database error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Validation error",
+                  "description": [
+                    {
+                      "path": [
+                        "field"
+                      ],
+                      "message": "Expected type, received type"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "No token provided, Invalid token or Token has expired"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a cart",
+        "tags": [
+          "CART"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Id del carrito",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Id del carrito",
+              "example": "1"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cart successfully deleted",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": false,
+                  "data": {
+                    "id": 1,
+                    "userId": 1,
+                    "status": "pending",
+                    "createdAt": "2024-08-10T20:58:05.507Z",
+                    "updatedAt": "2024-08-10T20:58:05.507Z",
+                    "products": [
+                      {
+                        "id": 1,
+                        "productId": 1,
+                        "cartId": 1,
+                        "quantity": 1,
+                        "createdAt": "2024-08-10T20:59:50.974Z",
+                        "updatedAt": "2024-08-10T20:59:50.974Z",
+                        "product": {
+                          "id": 1,
+                          "name": "Clean code JS",
+                          "description": "Mejora tu código con este gran libro.",
+                          "sku": "7a26c0a2-8cdb-4368-8373-c5c27debbd53",
+                          "price": 100,
+                          "categoryId": 1,
+                          "createdAt": "2024-08-10T21:49:26.804Z",
+                          "updatedAt": "2024-08-10T21:49:26.804Z"
+                        }
+                      },
+                      {
+                        "id": 2,
+                        "productId": 2,
+                        "cartId": 1,
+                        "quantity": 2,
+                        "createdAt": "2024-08-10T21:51:57.586Z",
+                        "updatedAt": "2024-08-10T21:51:57.586Z",
+                        "product": {
+                          "id": 2,
+                          "name": "MacBook Pro",
+                          "description": "La mejor computadora del mercado.",
+                          "sku": "cec21f32-58b3-41d9-bf1a-1af049ac0560",
+                          "price": 2000,
+                          "categoryId": 2,
+                          "createdAt": "2024-08-10T22:08:36.653Z",
+                          "updatedAt": "2024-08-10T22:08:36.653Z"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or Database error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Validation error",
+                  "description": [
+                    {
+                      "path": [
+                        "field"
+                      ],
+                      "message": "Expected type, received type"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "No token provided, Invalid token or Token has expired"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/product-cart": {
+      "get": {
+        "summary": "Get all product carts",
+        "tags": [
+          "PRODUCT-CART"
+        ],
+        "responses": {
+          "200": {
+            "description": "Product carts successfully retrieved",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": false,
+                  "data": [
+                    {
+                      "id": 1,
+                      "productId": 1,
+                      "cartId": 1,
+                      "quantity": 1,
+                      "createdAt": "2024-08-10T20:59:50.974Z",
+                      "updatedAt": "2024-08-10T20:59:50.974Z",
+                      "product": {
+                        "id": 1,
+                        "name": "Clean code JS",
+                        "description": "Mejora tu código con este gran libro.",
+                        "sku": "7a26c0a2-8cdb-4368-8373-c5c27debbd53",
+                        "price": 100,
+                        "categoryId": 1,
+                        "createdAt": "2024-08-10T21:49:26.804Z",
+                        "updatedAt": "2024-08-10T21:49:26.804Z"
+                      },
+                      "cart": {
+                        "id": 1,
+                        "userId": 1,
+                        "status": "pending",
+                        "createdAt": "2024-08-10T20:58:05.507Z",
+                        "updatedAt": "2024-08-10T20:58:05.507Z",
+                        "products": [
+                          {
+                            "id": 1,
+                            "productId": 1,
+                            "cartId": 1,
+                            "quantity": 1,
+                            "createdAt": "2024-08-10T20:59:50.974Z",
+                            "updatedAt": "2024-08-10T20:59:50.974Z",
+                            "product": {
+                              "id": 1,
+                              "name": "Clean code JS",
+                              "description": "Mejora tu código con este gran libro.",
+                              "sku": "7a26c0a2-8cdb-4368-8373-c5c27debbd53",
+                              "price": 100,
+                              "categoryId": 1,
+                              "createdAt": "2024-08-10T21:49:26.804Z",
+                              "updatedAt": "2024-08-10T21:49:26.804Z"
+                            }
+                          },
+                          {
+                            "id": 2,
+                            "productId": 2,
+                            "cartId": 1,
+                            "quantity": 2,
+                            "createdAt": "2024-08-10T21:51:57.586Z",
+                            "updatedAt": "2024-08-10T21:51:57.586Z",
+                            "product": {
+                              "id": 2,
+                              "name": "Macbook Pro",
+                              "description": "La mejor computadora del mercado.",
+                              "sku": "cec21f32-58b3-41d9-bf1a-1af049ac0560",
+                              "price": 2000,
+                              "categoryId": 2,
+                              "createdAt": "2024-08-10T22:08:36.653Z",
+                              "updatedAt": "2024-08-10T22:08:36.653Z"
+                            }
+                          },
+                          {
+                            "id": 6,
+                            "productId": 1,
+                            "cartId": 1,
+                            "quantity": 1,
+                            "createdAt": "2024-08-11T21:38:05.112Z",
+                            "updatedAt": "2024-08-11T21:38:05.112Z",
+                            "product": {
+                              "id": 1,
+                              "name": "Clean code JS",
+                              "description": "Mejora tu código con este gran libro.",
+                              "sku": "7a26c0a2-8cdb-4368-8373-c5c27debbd53",
+                              "price": 100,
+                              "categoryId": 1,
+                              "createdAt": "2024-08-10T21:49:26.804Z",
+                              "updatedAt": "2024-08-10T21:49:26.804Z"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": 2,
+                      "productId": 2,
+                      "cartId": 1,
+                      "quantity": 2,
+                      "createdAt": "2024-08-10T21:51:57.586Z",
+                      "updatedAt": "2024-08-10T21:51:57.586Z",
+                      "product": {
+                        "id": 2,
+                        "name": "Macbook Pro",
+                        "description": "La mejor computadora del mercado.",
+                        "sku": "cec21f32-58b3-41d9-bf1a-1af049ac0560",
+                        "price": 2000,
+                        "categoryId": 2,
+                        "createdAt": "2024-08-10T22:08:36.653Z",
+                        "updatedAt": "2024-08-10T22:08:36.653Z"
+                      },
+                      "cart": {
+                        "id": 1,
+                        "userId": 1,
+                        "status": "pending",
+                        "createdAt": "2024-08-10T20:58:05.507Z",
+                        "updatedAt": "2024-08-10T20:58:05.507Z",
+                        "products": [
+                          {
+                            "id": 1,
+                            "productId": 1,
+                            "cartId": 1,
+                            "quantity": 1,
+                            "createdAt": "2024-08-10T20:59:50.974Z",
+                            "updatedAt": "2024-08-10T20:59:50.974Z",
+                            "product": {
+                              "id": 1,
+                              "name": "Clean code JS",
+                              "description": "Mejora tu código con este gran libro.",
+                              "sku": "7a26c0a2-8cdb-4368-8373-c5c27debbd53",
+                              "price": 100,
+                              "categoryId": 1,
+                              "createdAt": "2024-08-10T21:49:26.804Z",
+                              "updatedAt": "2024-08-10T21:49:26.804Z"
+                            }
+                          },
+                          {
+                            "id": 2,
+                            "productId": 2,
+                            "cartId": 1,
+                            "quantity": 2,
+                            "createdAt": "2024-08-10T21:51:57.586Z",
+                            "updatedAt": "2024-08-10T21:51:57.586Z",
+                            "product": {
+                              "id": 2,
+                              "name": "Macbook Pro",
+                              "description": "La mejor computadora del mercado.",
+                              "sku": "cec21f32-58b3-41d9-bf1a-1af049ac0560",
+                              "price": 2000,
+                              "categoryId": 2,
+                              "createdAt": "2024-08-10T22:08:36.653Z",
+                              "updatedAt": "2024-08-10T22:08:36.653Z"
+                            }
+                          },
+                          {
+                            "id": 6,
+                            "productId": 1,
+                            "cartId": 1,
+                            "quantity": 1,
+                            "createdAt": "2024-08-11T21:38:05.112Z",
+                            "updatedAt": "2024-08-11T21:38:05.112Z",
+                            "product": {
+                              "id": 1,
+                              "name": "Clean code JS",
+                              "description": "Mejora tu código con este gran libro.",
+                              "sku": "7a26c0a2-8cdb-4368-8373-c5c27debbd53",
+                              "price": 100,
+                              "categoryId": 1,
+                              "createdAt": "2024-08-10T21:49:26.804Z",
+                              "updatedAt": "2024-08-10T21:49:26.804Z"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": 3,
+                      "productId": 2,
+                      "cartId": 2,
+                      "quantity": 3,
+                      "createdAt": "2024-08-11T17:08:13.110Z",
+                      "updatedAt": "2024-08-11T17:08:13.110Z",
+                      "product": {
+                        "id": 2,
+                        "name": "Macbook Pro",
+                        "description": "La mejor computadora del mercado.",
+                        "sku": "cec21f32-58b3-41d9-bf1a-1af049ac0560",
+                        "price": 2000,
+                        "categoryId": 2,
+                        "createdAt": "2024-08-10T22:08:36.653Z",
+                        "updatedAt": "2024-08-10T22:08:36.653Z"
+                      },
+                      "cart": {
+                        "id": 2,
+                        "userId": 1,
+                        "status": "completed",
+                        "createdAt": "2024-08-11T17:07:26.277Z",
+                        "updatedAt": "2024-08-11T17:07:26.277Z",
+                        "products": [
+                          {
+                            "id": 3,
+                            "productId": 2,
+                            "cartId": 2,
+                            "quantity": 3,
+                            "createdAt": "2024-08-11T17:08:13.110Z",
+                            "updatedAt": "2024-08-11T17:08:13.110Z",
+                            "product": {
+                              "id": 2,
+                              "name": "Macbook Pro",
+                              "description": "La mejor computadora del mercado.",
+                              "sku": "cec21f32-58b3-41d9-bf1a-1af049ac0560",
+                              "price": 2000,
+                              "categoryId": 2,
+                              "createdAt": "2024-08-10T22:08:36.653Z",
+                              "updatedAt": "2024-08-10T22:08:36.653Z"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Database error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Database error",
+                  "description": "Failed to fetch all product carts"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "No token provided, Invalid token or Token has expired"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Register a product cart",
+        "tags": [
+          "PRODUCT-CART"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "productId": {
+                    "type": "number",
+                    "minimum": 1,
+                    "description": "Id del producto en el carrito",
+                    "example": 1
+                  },
+                  "quantity": {
+                    "type": "number",
+                    "minimum": 1,
+                    "description": "Cantidad del producto en el carrito",
+                    "example": 1
+                  }
+                },
+                "required": [
+                  "productId",
+                  "quantity"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Product carts successfully registered",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": false,
+                  "data": {
+                    "id": 1,
+                    "productId": 1,
+                    "cartId": 1,
+                    "quantity": 1,
+                    "createdAt": "2024-08-10T20:59:50.974Z",
+                    "updatedAt": "2024-08-10T20:59:50.974Z",
+                    "product": {
+                      "id": 1,
+                      "name": "Clean code JS",
+                      "description": "Mejora tu código con este gran libro.",
+                      "sku": "7a26c0a2-8cdb-4368-8373-c5c27debbd53",
+                      "price": 100,
+                      "categoryId": 1,
+                      "createdAt": "2024-08-10T21:49:26.804Z",
+                      "updatedAt": "2024-08-10T21:49:26.804Z"
+                    },
+                    "cart": {
+                      "id": 1,
+                      "userId": 1,
+                      "status": "pending",
+                      "createdAt": "2024-08-10T20:58:05.507Z",
+                      "updatedAt": "2024-08-10T20:58:05.507Z",
+                      "products": [
+                        {
+                          "id": 1,
+                          "productId": 1,
+                          "cartId": 1,
+                          "quantity": 1,
+                          "createdAt": "2024-08-10T20:59:50.974Z",
+                          "updatedAt": "2024-08-10T20:59:50.974Z",
+                          "product": {
+                            "id": 1,
+                            "name": "Clean code JS",
+                            "description": "Mejora tu código con este gran libro.",
+                            "sku": "7a26c0a2-8cdb-4368-8373-c5c27debbd53",
+                            "price": 100,
+                            "categoryId": 1,
+                            "createdAt": "2024-08-10T21:49:26.804Z",
+                            "updatedAt": "2024-08-10T21:49:26.804Z"
+                          }
+                        },
+                        {
+                          "id": 2,
+                          "productId": 2,
+                          "cartId": 1,
+                          "quantity": 2,
+                          "createdAt": "2024-08-10T21:51:57.586Z",
+                          "updatedAt": "2024-08-10T21:51:57.586Z",
+                          "product": {
+                            "id": 2,
+                            "name": "Macbook Pro",
+                            "description": "La mejor computadora del mercado.",
+                            "sku": "cec21f32-58b3-41d9-bf1a-1af049ac0560",
+                            "price": 2000,
+                            "categoryId": 2,
+                            "createdAt": "2024-08-10T22:08:36.653Z",
+                            "updatedAt": "2024-08-10T22:08:36.653Z"
+                          }
+                        },
+                        {
+                          "id": 6,
+                          "productId": 1,
+                          "cartId": 1,
+                          "quantity": 1,
+                          "createdAt": "2024-08-11T21:38:05.112Z",
+                          "updatedAt": "2024-08-11T21:38:05.112Z",
+                          "product": {
+                            "id": 1,
+                            "name": "Clean code JS",
+                            "description": "Mejora tu código con este gran libro.",
+                            "sku": "7a26c0a2-8cdb-4368-8373-c5c27debbd53",
+                            "price": 100,
+                            "categoryId": 1,
+                            "createdAt": "2024-08-10T21:49:26.804Z",
+                            "updatedAt": "2024-08-10T21:49:26.804Z"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or Database error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Validation error",
+                  "description": [
+                    {
+                      "path": [
+                        "field"
+                      ],
+                      "message": "Expected type, received type"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "No token provided, Invalid token or Token has expired"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/product-cart/{id}": {
+      "get": {
+        "summary": "Get a product cart",
+        "tags": [
+          "PRODUCT-CART"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Id del registro del carrito con los productos",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Id del registro del carrito con los productos",
+              "example": "1"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product cart successfully retrieved",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": false,
+                  "data": {
+                    "id": 1,
+                    "productId": 1,
+                    "cartId": 1,
+                    "quantity": 1,
+                    "createdAt": "2024-08-10T20:59:50.974Z",
+                    "updatedAt": "2024-08-10T20:59:50.974Z",
+                    "product": {
+                      "id": 1,
+                      "name": "Clean code JS",
+                      "description": "Mejora tu código con este gran libro.",
+                      "sku": "7a26c0a2-8cdb-4368-8373-c5c27debbd53",
+                      "price": 100,
+                      "categoryId": 1,
+                      "createdAt": "2024-08-10T21:49:26.804Z",
+                      "updatedAt": "2024-08-10T21:49:26.804Z"
+                    },
+                    "cart": {
+                      "id": 1,
+                      "userId": 1,
+                      "status": "pending",
+                      "createdAt": "2024-08-10T20:58:05.507Z",
+                      "updatedAt": "2024-08-10T20:58:05.507Z",
+                      "products": [
+                        {
+                          "id": 1,
+                          "productId": 1,
+                          "cartId": 1,
+                          "quantity": 1,
+                          "createdAt": "2024-08-10T20:59:50.974Z",
+                          "updatedAt": "2024-08-10T20:59:50.974Z",
+                          "product": {
+                            "id": 1,
+                            "name": "Clean code JS",
+                            "description": "Mejora tu código con este gran libro.",
+                            "sku": "7a26c0a2-8cdb-4368-8373-c5c27debbd53",
+                            "price": 100,
+                            "categoryId": 1,
+                            "createdAt": "2024-08-10T21:49:26.804Z",
+                            "updatedAt": "2024-08-10T21:49:26.804Z"
+                          }
+                        },
+                        {
+                          "id": 2,
+                          "productId": 2,
+                          "cartId": 1,
+                          "quantity": 2,
+                          "createdAt": "2024-08-10T21:51:57.586Z",
+                          "updatedAt": "2024-08-10T21:51:57.586Z",
+                          "product": {
+                            "id": 2,
+                            "name": "Macbook Pro",
+                            "description": "La mejor computadora del mercado.",
+                            "sku": "cec21f32-58b3-41d9-bf1a-1af049ac0560",
+                            "price": 2000,
+                            "categoryId": 2,
+                            "createdAt": "2024-08-10T22:08:36.653Z",
+                            "updatedAt": "2024-08-10T22:08:36.653Z"
+                          }
+                        },
+                        {
+                          "id": 6,
+                          "productId": 1,
+                          "cartId": 1,
+                          "quantity": 1,
+                          "createdAt": "2024-08-11T21:38:05.112Z",
+                          "updatedAt": "2024-08-11T21:38:05.112Z",
+                          "product": {
+                            "id": 1,
+                            "name": "Clean code JS",
+                            "description": "Mejora tu código con este gran libro.",
+                            "sku": "7a26c0a2-8cdb-4368-8373-c5c27debbd53",
+                            "price": 100,
+                            "categoryId": 1,
+                            "createdAt": "2024-08-10T21:49:26.804Z",
+                            "updatedAt": "2024-08-10T21:49:26.804Z"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or Database error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Validation error",
+                  "description": [
+                    {
+                      "path": [
+                        "field"
+                      ],
+                      "message": "Expected type, received type"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "No token provided, Invalid token or Token has expired"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a product cart",
+        "tags": [
+          "PRODUCT-CART"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Id del registro del carrito con los productos",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Id del registro del carrito con los productos",
+              "example": "1"
+            },
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "quantity": {
+                    "type": "number",
+                    "minimum": 1,
+                    "description": "Cantidad del producto en el carrito",
+                    "example": 1
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Product cart successfully updated",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": false,
+                  "data": {
+                    "id": 1,
+                    "productId": 1,
+                    "cartId": 1,
+                    "quantity": 1,
+                    "createdAt": "2024-08-10T20:59:50.974Z",
+                    "updatedAt": "2024-08-10T20:59:50.974Z",
+                    "product": {
+                      "id": 1,
+                      "name": "Clean code JS",
+                      "description": "Mejora tu código con este gran libro.",
+                      "sku": "7a26c0a2-8cdb-4368-8373-c5c27debbd53",
+                      "price": 100,
+                      "categoryId": 1,
+                      "createdAt": "2024-08-10T21:49:26.804Z",
+                      "updatedAt": "2024-08-10T21:49:26.804Z"
+                    },
+                    "cart": {
+                      "id": 1,
+                      "userId": 1,
+                      "status": "pending",
+                      "createdAt": "2024-08-10T20:58:05.507Z",
+                      "updatedAt": "2024-08-10T20:58:05.507Z",
+                      "products": [
+                        {
+                          "id": 1,
+                          "productId": 1,
+                          "cartId": 1,
+                          "quantity": 1,
+                          "createdAt": "2024-08-10T20:59:50.974Z",
+                          "updatedAt": "2024-08-10T20:59:50.974Z",
+                          "product": {
+                            "id": 1,
+                            "name": "Clean code JS",
+                            "description": "Mejora tu código con este gran libro.",
+                            "sku": "7a26c0a2-8cdb-4368-8373-c5c27debbd53",
+                            "price": 100,
+                            "categoryId": 1,
+                            "createdAt": "2024-08-10T21:49:26.804Z",
+                            "updatedAt": "2024-08-10T21:49:26.804Z"
+                          }
+                        },
+                        {
+                          "id": 2,
+                          "productId": 2,
+                          "cartId": 1,
+                          "quantity": 2,
+                          "createdAt": "2024-08-10T21:51:57.586Z",
+                          "updatedAt": "2024-08-10T21:51:57.586Z",
+                          "product": {
+                            "id": 2,
+                            "name": "Macbook Pro",
+                            "description": "La mejor computadora del mercado.",
+                            "sku": "cec21f32-58b3-41d9-bf1a-1af049ac0560",
+                            "price": 2000,
+                            "categoryId": 2,
+                            "createdAt": "2024-08-10T22:08:36.653Z",
+                            "updatedAt": "2024-08-10T22:08:36.653Z"
+                          }
+                        },
+                        {
+                          "id": 6,
+                          "productId": 1,
+                          "cartId": 1,
+                          "quantity": 1,
+                          "createdAt": "2024-08-11T21:38:05.112Z",
+                          "updatedAt": "2024-08-11T21:38:05.112Z",
+                          "product": {
+                            "id": 1,
+                            "name": "Clean code JS",
+                            "description": "Mejora tu código con este gran libro.",
+                            "sku": "7a26c0a2-8cdb-4368-8373-c5c27debbd53",
+                            "price": 100,
+                            "categoryId": 1,
+                            "createdAt": "2024-08-10T21:49:26.804Z",
+                            "updatedAt": "2024-08-10T21:49:26.804Z"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or Database error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Validation error",
+                  "description": [
+                    {
+                      "path": [
+                        "field"
+                      ],
+                      "message": "Expected type, received type"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "No token provided, Invalid token or Token has expired"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a cart",
+        "tags": [
+          "PRODUCT-CART"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Id del registro del carrito con los productos",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Id del registro del carrito con los productos",
+              "example": "1"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cart successfully deleted",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": false,
+                  "data": {
+                    "id": 1,
+                    "productId": 1,
+                    "cartId": 1,
+                    "quantity": 1,
+                    "createdAt": "2024-08-10T20:59:50.974Z",
+                    "updatedAt": "2024-08-10T20:59:50.974Z",
+                    "product": {
+                      "id": 1,
+                      "name": "Clean code JS",
+                      "description": "Mejora tu código con este gran libro.",
+                      "sku": "7a26c0a2-8cdb-4368-8373-c5c27debbd53",
+                      "price": 100,
+                      "categoryId": 1,
+                      "createdAt": "2024-08-10T21:49:26.804Z",
+                      "updatedAt": "2024-08-10T21:49:26.804Z"
+                    },
+                    "cart": {
+                      "id": 1,
+                      "userId": 1,
+                      "status": "pending",
+                      "createdAt": "2024-08-10T20:58:05.507Z",
+                      "updatedAt": "2024-08-10T20:58:05.507Z",
+                      "products": [
+                        {
+                          "id": 1,
+                          "productId": 1,
+                          "cartId": 1,
+                          "quantity": 1,
+                          "createdAt": "2024-08-10T20:59:50.974Z",
+                          "updatedAt": "2024-08-10T20:59:50.974Z",
+                          "product": {
+                            "id": 1,
+                            "name": "Clean code JS",
+                            "description": "Mejora tu código con este gran libro.",
+                            "sku": "7a26c0a2-8cdb-4368-8373-c5c27debbd53",
+                            "price": 100,
+                            "categoryId": 1,
+                            "createdAt": "2024-08-10T21:49:26.804Z",
+                            "updatedAt": "2024-08-10T21:49:26.804Z"
+                          }
+                        },
+                        {
+                          "id": 2,
+                          "productId": 2,
+                          "cartId": 1,
+                          "quantity": 2,
+                          "createdAt": "2024-08-10T21:51:57.586Z",
+                          "updatedAt": "2024-08-10T21:51:57.586Z",
+                          "product": {
+                            "id": 2,
+                            "name": "Macbook Pro",
+                            "description": "La mejor computadora del mercado.",
+                            "sku": "cec21f32-58b3-41d9-bf1a-1af049ac0560",
+                            "price": 2000,
+                            "categoryId": 2,
+                            "createdAt": "2024-08-10T22:08:36.653Z",
+                            "updatedAt": "2024-08-10T22:08:36.653Z"
+                          }
+                        },
+                        {
+                          "id": 6,
+                          "productId": 1,
+                          "cartId": 1,
+                          "quantity": 1,
+                          "createdAt": "2024-08-11T21:38:05.112Z",
+                          "updatedAt": "2024-08-11T21:38:05.112Z",
+                          "product": {
+                            "id": 1,
+                            "name": "Clean code JS",
+                            "description": "Mejora tu código con este gran libro.",
+                            "sku": "7a26c0a2-8cdb-4368-8373-c5c27debbd53",
+                            "price": 100,
+                            "categoryId": 1,
+                            "createdAt": "2024-08-10T21:49:26.804Z",
+                            "updatedAt": "2024-08-10T21:49:26.804Z"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or Database error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Validation error",
+                  "description": [
+                    {
+                      "path": [
+                        "field"
+                      ],
+                      "message": "Expected type, received type"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "No token provided, Invalid token or Token has expired"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT Authorization header using the Bearer scheme."
+      }
+    }
+  }
+}

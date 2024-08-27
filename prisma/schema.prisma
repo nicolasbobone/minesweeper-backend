@@ -1,0 +1,79 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["views"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  firstName String   @map("first_name")
+  lastName  String   @map("last_name")
+  password  String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+  carts     Cart[]   @relation("UserCarts")
+
+  @@map("users")
+}
+
+model Product {
+  id          Int           @id @default(autoincrement())
+  name        String
+  description String
+  sku         String        @unique
+  price       Float         @map("price")
+  categoryId  Int           @map("category_id")
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @default(now()) @map("updated_at")
+  carts       ProductCart[] @relation("ProductInCarts")
+  category    Category      @relation(fields: [categoryId], references: [id])
+
+  @@map("products")
+}
+
+model Category {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
+  description String?
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @default(now()) @map("updated_at")
+  products    Product[]
+
+  @@map("categories")
+}
+
+model Cart {
+  id        Int           @id @default(autoincrement())
+  userId    Int           @map("user_id")
+  status    StatusCart    @default(pending)
+  createdAt DateTime      @default(now()) @map("created_at")
+  updatedAt DateTime      @default(now()) @map("updated_at")
+  user      User          @relation("UserCarts", fields: [userId], references: [id])
+  products  ProductCart[] @relation("CartProducts")
+
+  @@map("carts")
+}
+
+model ProductCart {
+  id        Int      @id @default(autoincrement())
+  productId Int      @map("product_id")
+  cartId    Int      @map("cart_id")
+  quantity  Int
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+  cart      Cart     @relation("CartProducts", fields: [cartId], references: [id], onDelete: Cascade)
+  product   Product  @relation("ProductInCarts", fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("product_carts")
+}
+
+enum StatusCart {
+  pending
+  completed
+  canceled
+}
