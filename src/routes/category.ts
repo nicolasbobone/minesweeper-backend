@@ -5,9 +5,9 @@ import { CategorySchema } from '../schemas/category';
 
 const router = Router();
 
-router.get('/', tryCatch(CategoryController.getAll));
+router.post('/', tryCatch(CategoryController.getAll, CategorySchema.getAll()));
 router.get('/:id', tryCatch(CategoryController.getById, CategorySchema.get()));
-router.post('/', tryCatch(CategoryController.create, CategorySchema.create()));
+router.post('/create', tryCatch(CategoryController.create, CategorySchema.create()));
 router.put('/:id', tryCatch(CategoryController.update, CategorySchema.update()));
 router.delete('/:id', tryCatch(CategoryController.delete, CategorySchema.delete()));
 

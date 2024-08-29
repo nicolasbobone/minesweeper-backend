@@ -5,9 +5,9 @@ import { Category } from '../interfaces/category';
 const table = prisma.category;
 
 export class CategoryService {
-  static async getAll(): Promise<Category[]> {
+  static async getAll(category: Partial<Category>): Promise<Category[]> {
     try {
-      return await table.findMany();
+      return await table.findMany({ where: category });
     } catch (error: any) {
       throw new DatabaseError('Failed to fetch all categories', error);
     }

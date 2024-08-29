@@ -229,11 +229,34 @@
       }
     },
     "/category": {
-      "get": {
+      "post": {
         "summary": "Get all categories",
         "tags": [
           "CATEGORY"
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 3,
+                    "description": "Descripción de la categoría",
+                    "example": "Recomendación de libros"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Descripción de la categoría",
+                    "example": "Recomendación de libros"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Categories successfully retrieved",
@@ -294,7 +317,9 @@
             }
           }
         }
-      },
+      }
+    },
+    "/category/create": {
       "post": {
         "summary": "Register a category",
         "tags": [
@@ -652,11 +677,46 @@
       }
     },
     "/product": {
-      "get": {
+      "post": {
         "summary": "Get all products",
         "tags": [
           "PRODUCT"
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 3,
+                    "description": "Nombre del producto",
+                    "example": "Clean code JS"
+                  },
+                  "price": {
+                    "type": "number",
+                    "minimum": 0,
+                    "description": "Precio del producto",
+                    "example": 100
+                  },
+                  "categoryId": {
+                    "type": "number",
+                    "minimum": 1,
+                    "description": "Id de la categoría del producto",
+                    "example": 1
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Descripción del producto",
+                    "example": "Mejora tu código con este gran libro."
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Products successfully retrieved",
@@ -739,7 +799,9 @@
             }
           }
         }
-      },
+      }
+    },
+    "/product/create": {
       "post": {
         "summary": "Register a product",
         "tags": [

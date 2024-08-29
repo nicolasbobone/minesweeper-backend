@@ -5,7 +5,8 @@ import { ProductService } from '../services/product';
 
 export class ProductController {
   static async getAll(req: RequestAuth, res: Response) {
-    const products = await ProductService.getAll();
+    const { body } = req;
+    const products = await ProductService.getAll(body);
     response(res, products);
   }
 

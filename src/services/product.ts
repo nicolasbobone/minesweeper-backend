@@ -6,9 +6,10 @@ import { CategoryService } from './category';
 const table = prisma.product;
 
 export class ProductService {
-  static async getAll(): Promise<Product[]> {
+  static async getAll(product: Partial<Product>): Promise<Product[]> {
     try {
       return await table.findMany({
+        where: product,
         include: {
           category: true,
         },

@@ -18,6 +18,23 @@ export class CategorySchema {
     };
   }
 
+  static getAll() {
+    return {
+      body: z
+        .object({
+          name: z.string().min(3).optional().openapi({
+            description: 'Descripción de la categoría',
+            example: 'Recomendación de libros',
+          }),
+          description: z.string().optional().openapi({
+            description: 'Descripción de la categoría',
+            example: 'Recomendación de libros',
+          }),
+        })
+        .strict(),
+    };
+  }
+
   static create() {
     return {
       body: z

@@ -13,12 +13,14 @@ const schemas = {
   },
   category: {
     get: CategorySchema.get().params,
+    getAll: CategorySchema.getAll().body,
     create: CategorySchema.create().body,
     update: CategorySchema.update(),
     delete: CategorySchema.delete().params,
   },
   product: {
     get: ProductSchema.get().params,
+    getAll: ProductSchema.getAll().body,
     create: ProductSchema.create().body,
     update: ProductSchema.update(),
     delete: ProductSchema.delete().params,
@@ -149,9 +151,14 @@ const document = createDocument({
     },
     // CATEGORY
     '/category': {
-      get: {
+      post: {
         summary: 'Get all categories',
         tags: ['CATEGORY'],
+        requestBody: {
+          content: {
+            'application/json': { schema: schemas.category.getAll },
+          },
+        },
         responses: {
           ...createResponse(200, 'Categories successfully retrieved', {
             error: false,
@@ -179,6 +186,8 @@ const document = createDocument({
           ...commonResponses.serverError,
         },
       },
+    },
+    '/category/create': {
       post: {
         summary: 'Register a category',
         tags: ['CATEGORY'],
@@ -277,9 +286,14 @@ const document = createDocument({
     },
     // PRODUCT
     '/product': {
-      get: {
+      post: {
         summary: 'Get all products',
         tags: ['PRODUCT'],
+        requestBody: {
+          content: {
+            'application/json': { schema: schemas.product.getAll },
+          },
+        },
         responses: {
           ...createResponse(200, 'Products successfully retrieved', {
             error: false,
@@ -329,6 +343,8 @@ const document = createDocument({
           ...commonResponses.serverError,
         },
       },
+    },
+    '/product/create': {
       post: {
         summary: 'Register a product',
         tags: ['PRODUCT'],

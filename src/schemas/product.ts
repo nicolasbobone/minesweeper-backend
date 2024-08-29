@@ -18,6 +18,31 @@ export class ProductSchema {
     };
   }
 
+  static getAll() {
+    return {
+      body: z
+        .object({
+          name: z.string().min(3).optional().openapi({
+            description: 'Nombre del producto',
+            example: 'Clean code JS',
+          }),
+          price: z.number().min(0).optional().openapi({
+            description: 'Precio del producto',
+            example: 100,
+          }),
+          categoryId: z.number().min(1).optional().openapi({
+            description: 'Id de la categoría del producto',
+            example: 1,
+          }),
+          description: z.string().optional().openapi({
+            description: 'Descripción del producto',
+            example: 'Mejora tu código con este gran libro.',
+          }),
+        })
+        .strict(),
+    };
+  }
+
   static create() {
     return {
       body: z
