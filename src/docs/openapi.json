@@ -1,0 +1,1634 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Minesweeper",
+    "version": "1.0.0",
+    "description": "API documentation for Minesweeper",
+    "contact": {
+      "name": "API Support",
+      "email": "nicolasbobone@gmail.com"
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "summary": "User register",
+        "tags": [
+          "AUTH"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "firstName": {
+                    "type": "string",
+                    "minLength": 3,
+                    "description": "Nombre del usuario",
+                    "example": "Jaime"
+                  },
+                  "lastName": {
+                    "type": "string",
+                    "minLength": 3,
+                    "description": "Apellido del usuario",
+                    "example": "Fulano"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "Email del usuario",
+                    "example": "jaimefulano@gmail.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 6,
+                    "description": "Contraseña del usuario",
+                    "example": "contraseña.de.jaime"
+                  }
+                },
+                "required": [
+                  "firstName",
+                  "lastName",
+                  "email",
+                  "password"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User successfully registered",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": false,
+                  "data": {
+                    "id": 1,
+                    "email": "jaimefulano@gmail.com",
+                    "firstName": "Jaime",
+                    "lastName": "Fulano",
+                    "createdAt": "2024-07-21T15:49:08.551Z",
+                    "updatedAt": "2024-07-21T15:49:08.551Z"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or Database error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Validation error or Database error",
+                  "description": [
+                    {
+                      "path": [
+                        "field"
+                      ],
+                      "message": "Expected type, received type"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User already exists",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "User already exists"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "User login",
+        "tags": [
+          "AUTH"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "Email del usuario",
+                    "example": "jaimefulano@gmail.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 6,
+                    "description": "Contraseña del usuario",
+                    "example": "contraseña.de.jaime"
+                  }
+                },
+                "required": [
+                  "email",
+                  "password"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User successfully logged in",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": false,
+                  "data": {
+                    "token": "access token",
+                    "expiresIn": 36000
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or Database error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Validation error or Database error",
+                  "description": [
+                    {
+                      "path": [
+                        "field"
+                      ],
+                      "message": "Expected type, received type"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User does not exist or Incorrect credentials",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Incorrect credentials"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/refresh-token": {
+      "get": {
+        "summary": "Refresh token",
+        "tags": [
+          "AUTH"
+        ],
+        "responses": {
+          "200": {
+            "description": "Refresh token success",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": false,
+                  "data": {
+                    "token": "access token",
+                    "expiresIn": 36000
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "No token provided, Invalid token or Token has expired"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "get": {
+        "summary": "Logout user",
+        "tags": [
+          "AUTH"
+        ],
+        "responses": {
+          "200": {
+            "description": "Logout success",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": false,
+                  "data": {
+                    "message": "Logout success"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/game": {
+      "post": {
+        "summary": "Get all games",
+        "tags": [
+          "GAME"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "userId": {
+                    "type": "number",
+                    "minimum": 1,
+                    "description": "Id de la partida",
+                    "example": 1
+                  },
+                  "startDate": {
+                    "type": "string",
+                    "description": "Fecha de inicio de la partida",
+                    "example": "2024-10-21T15:00:00.000Z"
+                  },
+                  "endDate": {
+                    "type": "string",
+                    "description": "Fecha de fin de la partida",
+                    "example": "2024-10-21T15:00:00.000Z"
+                  },
+                  "totalTime": {
+                    "type": "number",
+                    "minimum": 0,
+                    "description": "Tiempo total de la partida",
+                    "example": 36000
+                  },
+                  "result": {
+                    "type": "string",
+                    "enum": [
+                      "WIN",
+                      "LOSE"
+                    ],
+                    "description": "Descripción del producto",
+                    "example": "WIN"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "CREATED",
+                      "IN_PROGRESS",
+                      "FINISHED"
+                    ],
+                    "description": "Estado de la partida",
+                    "example": "FINISHED"
+                  },
+                  "rows": {
+                    "type": "number",
+                    "minimum": 1,
+                    "description": "Cantidad de filas del tablero de juego",
+                    "example": 10
+                  },
+                  "columns": {
+                    "type": "number",
+                    "minimum": 1,
+                    "description": "Cantidad de columnas del tablero de juego",
+                    "example": 10
+                  },
+                  "minesCount": {
+                    "type": "number",
+                    "minimum": 1,
+                    "description": "Cantidad de minas del tablero de juego",
+                    "example": 10
+                  },
+                  "difficulty": {
+                    "type": "string",
+                    "enum": [
+                      "EASY",
+                      "MEDIUM",
+                      "HARD"
+                    ],
+                    "description": "Dificultad de la partida",
+                    "example": "MEDIUM"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Games successfully retrieved",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": false,
+                  "data": [
+                    {
+                      "id": 1,
+                      "userId": 1,
+                      "startDate": "2024-09-22T23:29:47.063Z",
+                      "endDate": null,
+                      "totalTime": 0,
+                      "result": null,
+                      "status": "IN_PROGRESS",
+                      "rows": 10,
+                      "columns": 10,
+                      "minesCount": 10,
+                      "difficulty": "MEDIUM",
+                      "createdAt": "2024-09-22T23:29:47.063Z",
+                      "updatedAt": "2024-09-22T23:29:47.063Z",
+                      "cells": [
+                        "..."
+                      ]
+                    },
+                    {
+                      "id": 2,
+                      "userId": 1,
+                      "startDate": "2024-09-22T23:29:47.063Z",
+                      "endDate": null,
+                      "totalTime": 0,
+                      "result": null,
+                      "status": "IN_PROGRESS",
+                      "rows": 10,
+                      "columns": 10,
+                      "minesCount": 10,
+                      "difficulty": "MEDIUM",
+                      "createdAt": "2024-09-22T23:29:47.063Z",
+                      "updatedAt": "2024-09-22T23:29:47.063Z",
+                      "cells": [
+                        "..."
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or Database error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Validation error or Database error",
+                  "description": [
+                    {
+                      "path": [
+                        "field"
+                      ],
+                      "message": "Expected type, received type"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "No token provided, Invalid token or Token has expired"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/game/create": {
+      "post": {
+        "summary": "Register a game",
+        "tags": [
+          "GAME"
+        ],
+        "responses": {
+          "201": {
+            "description": "Game successfully registered",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": false,
+                  "data": {
+                    "id": 1,
+                    "userId": 1,
+                    "startDate": "2024-09-22T23:29:47.063Z",
+                    "endDate": null,
+                    "totalTime": 0,
+                    "result": null,
+                    "status": "IN_PROGRESS",
+                    "rows": 10,
+                    "columns": 10,
+                    "minesCount": 10,
+                    "difficulty": "MEDIUM",
+                    "createdAt": "2024-09-22T23:29:47.063Z",
+                    "updatedAt": "2024-09-22T23:29:47.063Z",
+                    "cells": [
+                      "..."
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or Database error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Validation error or Database error",
+                  "description": [
+                    {
+                      "path": [
+                        "field"
+                      ],
+                      "message": "Expected type, received type"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "No token provided, Invalid token or Token has expired"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/game/{id}": {
+      "get": {
+        "summary": "Get a game",
+        "tags": [
+          "GAME"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Id de la partida",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Id de la partida",
+              "example": "1"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Game successfully retrieved",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": false,
+                  "data": {
+                    "id": 1,
+                    "userId": 1,
+                    "startDate": "2024-09-22T23:29:47.063Z",
+                    "endDate": null,
+                    "totalTime": 0,
+                    "result": null,
+                    "status": "IN_PROGRESS",
+                    "rows": 10,
+                    "columns": 10,
+                    "minesCount": 10,
+                    "difficulty": "MEDIUM",
+                    "createdAt": "2024-09-22T23:29:47.063Z",
+                    "updatedAt": "2024-09-22T23:29:47.063Z",
+                    "cells": [
+                      "..."
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or Database error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Validation error or Database error",
+                  "description": [
+                    {
+                      "path": [
+                        "field"
+                      ],
+                      "message": "Expected type, received type"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "No token provided, Invalid token or Token has expired"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a game",
+        "tags": [
+          "GAME"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Id de la partida",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Id de la partida",
+              "example": "1"
+            },
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "endDate": {
+                    "type": "string",
+                    "description": "Fecha de fin de la partida",
+                    "example": "2024-10-21T15:00:00.000Z"
+                  },
+                  "totalTime": {
+                    "type": "number",
+                    "minimum": 0,
+                    "description": "Tiempo total de la partida",
+                    "example": 100
+                  },
+                  "result": {
+                    "type": "string",
+                    "enum": [
+                      "WIN",
+                      "LOSE"
+                    ],
+                    "description": "Descripción del producto",
+                    "example": "WIN"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "IN_PROGRESS",
+                      "FINISHED"
+                    ],
+                    "description": "Estado de la partida",
+                    "example": "FINISHED"
+                  },
+                  "cells": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "number",
+                          "minimum": 1,
+                          "description": "Id de la celda",
+                          "example": 1
+                        },
+                        "gameId": {
+                          "type": "number",
+                          "minimum": 1,
+                          "description": "Id de la partida",
+                          "example": 1
+                        },
+                        "row": {
+                          "type": "number",
+                          "minimum": 0,
+                          "description": "Posición de la fila de la celda",
+                          "example": 5
+                        },
+                        "column": {
+                          "type": "number",
+                          "minimum": 0,
+                          "description": "Posición de la columna de la celda",
+                          "example": 5
+                        },
+                        "isRevealed": {
+                          "type": "boolean",
+                          "description": "Si la celda tiene mina y esta fue revelada",
+                          "example": true
+                        },
+                        "isMine": {
+                          "type": "boolean",
+                          "description": "Si la celda tiene mina",
+                          "example": true
+                        },
+                        "adjacentMines": {
+                          "type": "number",
+                          "minimum": 0,
+                          "description": "La cantidad de minas adyacentes a la celda",
+                          "example": 0
+                        },
+                        "isFlag": {
+                          "type": "boolean",
+                          "description": "Si la celda tiene bandera",
+                          "example": false
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "gameId",
+                        "row",
+                        "column",
+                        "isRevealed",
+                        "isMine",
+                        "adjacentMines",
+                        "isFlag"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Lista de celdas del juego",
+                    "example": []
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Game successfully updated",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": false,
+                  "data": {
+                    "id": 1,
+                    "userId": 1,
+                    "startDate": "2024-09-22T23:29:47.063Z",
+                    "endDate": "2024-10-22T23:29:47.063Z",
+                    "totalTime": 0,
+                    "result": "WIN",
+                    "status": "FINISHED",
+                    "rows": 10,
+                    "columns": 10,
+                    "minesCount": 10,
+                    "difficulty": "MEDIUM",
+                    "createdAt": "2024-09-22T23:29:47.063Z",
+                    "updatedAt": "2024-10-22T23:29:47.063Z",
+                    "cells": [
+                      "..."
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or Database error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Validation error or Database error",
+                  "description": [
+                    {
+                      "path": [
+                        "field"
+                      ],
+                      "message": "Expected type, received type"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "No token provided, Invalid token or Token has expired"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a game",
+        "tags": [
+          "GAME"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Id de la partida",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Id de la partida",
+              "example": "1"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Game successfully deleted",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": false,
+                  "data": {
+                    "id": 1,
+                    "userId": 1,
+                    "startDate": "2024-09-22T23:29:47.063Z",
+                    "endDate": "2024-10-22T23:29:47.063Z",
+                    "totalTime": 0,
+                    "result": "WIN",
+                    "status": "FINISHED",
+                    "rows": 10,
+                    "columns": 10,
+                    "minesCount": 10,
+                    "difficulty": "MEDIUM",
+                    "createdAt": "2024-09-22T23:29:47.063Z",
+                    "updatedAt": "2024-10-22T23:29:47.063Z",
+                    "cells": [
+                      "..."
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or Database error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Validation error or Database error",
+                  "description": [
+                    {
+                      "path": [
+                        "field"
+                      ],
+                      "message": "Expected type, received type"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "No token provided, Invalid token or Token has expired"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cell": {
+      "post": {
+        "summary": "Get all cells",
+        "tags": [
+          "CELL"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "gameId": {
+                    "type": "number",
+                    "minimum": 1,
+                    "description": "Id de la partida",
+                    "example": 1
+                  },
+                  "row": {
+                    "type": "number",
+                    "minimum": 1,
+                    "description": "Posición de la fila de la celda",
+                    "example": 5
+                  },
+                  "column": {
+                    "type": "number",
+                    "minimum": 1,
+                    "description": "Posición de la columna de la celda",
+                    "example": 5
+                  },
+                  "isMine": {
+                    "type": "boolean",
+                    "description": "Si la celda tiene mina",
+                    "example": true
+                  },
+                  "isRevealed": {
+                    "type": "boolean",
+                    "description": "Si la celda tiene mina y esta fue revelada",
+                    "example": true
+                  },
+                  "adjacentMines": {
+                    "type": "number",
+                    "minimum": 0,
+                    "description": "La cantidad de minas adyacentes a la celda",
+                    "example": 0
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Cells successfully retrieved",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": false,
+                  "data": [
+                    {
+                      "id": 1,
+                      "gameId": 1,
+                      "row": 5,
+                      "column": 5,
+                      "isMine": true,
+                      "isRevealed": true,
+                      "adjacentMines": 0
+                    },
+                    {
+                      "id": 2,
+                      "gameId": 1,
+                      "row": 5,
+                      "column": 5,
+                      "isMine": true,
+                      "isRevealed": true,
+                      "adjacentMines": 0
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or Database error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Validation error or Database error",
+                  "description": [
+                    {
+                      "path": [
+                        "field"
+                      ],
+                      "message": "Expected type, received type"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "No token provided, Invalid token or Token has expired"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a game",
+        "tags": [
+          "CELL"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "number",
+                      "minimum": 1,
+                      "description": "Id de la celda",
+                      "example": 1
+                    },
+                    "gameId": {
+                      "type": "number",
+                      "minimum": 1,
+                      "description": "Id de la partida",
+                      "example": 1
+                    },
+                    "row": {
+                      "type": "number",
+                      "minimum": 0,
+                      "description": "Posición de la fila de la celda",
+                      "example": 5
+                    },
+                    "column": {
+                      "type": "number",
+                      "minimum": 0,
+                      "description": "Posición de la columna de la celda",
+                      "example": 5
+                    },
+                    "isRevealed": {
+                      "type": "boolean",
+                      "description": "Si la celda tiene mina y esta fue revelada",
+                      "example": true
+                    },
+                    "isMine": {
+                      "type": "boolean",
+                      "description": "Si la celda tiene mina",
+                      "example": true
+                    },
+                    "adjacentMines": {
+                      "type": "number",
+                      "minimum": 0,
+                      "description": "La cantidad de minas adyacentes a la celda",
+                      "example": 0
+                    },
+                    "isFlag": {
+                      "type": "boolean",
+                      "description": "Si la celda tiene bandera",
+                      "example": false
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "gameId",
+                    "row",
+                    "column",
+                    "isRevealed",
+                    "isMine",
+                    "adjacentMines",
+                    "isFlag"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Cell successfully updated",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": false,
+                  "data": {
+                    "id": 1,
+                    "gameId": 1,
+                    "row": 5,
+                    "column": 5,
+                    "isMine": true,
+                    "isRevealed": true,
+                    "adjacentMines": 0,
+                    "createdAt": "2024-09-22T23:47:46.844Z",
+                    "updatedAt": "2024-09-22T23:47:46.844Z"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or Database error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Validation error or Database error",
+                  "description": [
+                    {
+                      "path": [
+                        "field"
+                      ],
+                      "message": "Expected type, received type"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "No token provided, Invalid token or Token has expired"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cell/{id}": {
+      "get": {
+        "summary": "Get a cell",
+        "tags": [
+          "CELL"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Id de la celda",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Id de la celda",
+              "example": "1"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cell successfully retrieved",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": false,
+                  "data": {
+                    "id": 1,
+                    "gameId": 1,
+                    "row": 5,
+                    "column": 5,
+                    "isMine": true,
+                    "isRevealed": true,
+                    "adjacentMines": 0,
+                    "createdAt": "2024-09-22T23:47:46.844Z",
+                    "updatedAt": "2024-09-22T23:47:46.844Z"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or Database error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Validation error or Database error",
+                  "description": [
+                    {
+                      "path": [
+                        "field"
+                      ],
+                      "message": "Expected type, received type"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "No token provided, Invalid token or Token has expired"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a cell",
+        "tags": [
+          "CELL"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Id de la celda",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Id de la celda",
+              "example": "1"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cell successfully deleted",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": false,
+                  "data": {
+                    "id": 1,
+                    "gameId": 1,
+                    "row": 5,
+                    "column": 5,
+                    "isMine": true,
+                    "isRevealed": true,
+                    "adjacentMines": 0,
+                    "createdAt": "2024-09-22T23:47:46.844Z",
+                    "updatedAt": "2024-09-22T23:47:46.844Z"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or Database error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Validation error or Database error",
+                  "description": [
+                    {
+                      "path": [
+                        "field"
+                      ],
+                      "message": "Expected type, received type"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "No token provided, Invalid token or Token has expired"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/setup": {
+      "post": {
+        "summary": "Register or Update a setup",
+        "tags": [
+          "SETUP"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "rows": {
+                    "type": "number",
+                    "minimum": 8,
+                    "maximum": 24,
+                    "description": "Cantidad de filas del tablero de juego",
+                    "example": 10
+                  },
+                  "columns": {
+                    "type": "number",
+                    "minimum": 8,
+                    "maximum": 24,
+                    "description": "Cantidad de columnas del tablero de juego",
+                    "example": 10
+                  },
+                  "minesCount": {
+                    "type": "number",
+                    "minimum": 1,
+                    "maximum": 99,
+                    "description": "Cantidad de minas del tablero de juego",
+                    "example": 10
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Setup successfully registered",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": false,
+                  "data": {
+                    "id": 1,
+                    "rows": 10,
+                    "columns": 10,
+                    "minesCount": 10,
+                    "difficulty": "MEDIUM",
+                    "createdAt": "2024-09-22T23:29:47.063Z",
+                    "updatedAt": "2024-09-22T23:29:47.063Z"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or Database error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Validation error or Database error",
+                  "description": [
+                    {
+                      "path": [
+                        "field"
+                      ],
+                      "message": "Expected type, received type"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "No token provided, Invalid token or Token has expired"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Get a setup",
+        "tags": [
+          "SETUP"
+        ],
+        "responses": {
+          "200": {
+            "description": "Setup successfully retrieved",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": false,
+                  "data": {
+                    "id": 1,
+                    "rows": 10,
+                    "columns": 10,
+                    "minesCount": 10,
+                    "difficulty": "MEDIUM",
+                    "createdAt": "2024-09-22T23:29:47.063Z",
+                    "updatedAt": "2024-09-22T23:29:47.063Z"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or Database error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Validation error or Database error",
+                  "description": [
+                    {
+                      "path": [
+                        "field"
+                      ],
+                      "message": "Expected type, received type"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "No token provided, Invalid token or Token has expired"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a setup",
+        "tags": [
+          "SETUP"
+        ],
+        "responses": {
+          "200": {
+            "description": "Setup successfully deleted",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": false,
+                  "data": {
+                    "id": 1,
+                    "rows": 10,
+                    "columns": 10,
+                    "minesCount": 10,
+                    "difficulty": "MEDIUM",
+                    "createdAt": "2024-09-22T23:29:47.063Z",
+                    "updatedAt": "2024-10-22T23:29:47.063Z"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error or Database error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Validation error or Database error",
+                  "description": [
+                    {
+                      "path": [
+                        "field"
+                      ],
+                      "message": "Expected type, received type"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "No token provided, Invalid token or Token has expired"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": true,
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT Authorization header using the Bearer scheme."
+      }
+    }
+  }
+}

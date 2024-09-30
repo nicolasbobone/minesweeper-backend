@@ -1,0 +1,94 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["views"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int    @id @default(autoincrement())
+  email     String @unique
+  firstName String @map("first_name")
+  lastName  String @map("last_name")
+  password  String
+
+  games Game[] @relation("UserGames")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  @@map("users")
+}
+
+model Game {
+  id         Int            @id @default(autoincrement())
+  userId     Int            @map("user_id")
+  startDate  DateTime       @default(now()) @map("start_date")
+  endDate    DateTime?      @map("end_date")
+  totalTime  Int            @default(0) @map("total_time")
+  result     GameResult?
+  status     GameStatus     @default(IN_PROGRESS)
+  rows       Int
+  columns    Int
+  minesCount Int            @map("mines_count")
+  difficulty GameDifficulty
+
+  user  User   @relation(fields: [userId], references: [id], name: "UserGames")
+  cells Cell[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  @@map("games")
+}
+
+model Cell {
+  id            Int     @id @default(autoincrement())
+  gameId        Int     @map("game_id")
+  row           Int
+  column        Int
+  isMine        Boolean @default(false) @map("is_mine")
+  isFlag        Boolean @default(false) @map("is_flag")
+  isRevealed    Boolean @default(false) @map("is_revealed")
+  adjacentMines Int     @default(0) @map("adjacent_mines")
+
+  game Game @relation(fields: [gameId], references: [id])
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  @@unique([gameId, row, column])
+  @@map("cells")
+}
+
+model Setup {
+  id         Int            @id @default(1)
+  rows       Int            @default(10)
+  columns    Int            @default(10)
+  minesCount Int            @default(10) @map("mines_count")
+  difficulty GameDifficulty @default(EASY)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  @@map("setups")
+}
+
+enum GameStatus {
+  IN_PROGRESS
+  FINISHED
+}
+
+enum GameDifficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum GameResult {
+  WIN
+  LOSE
+}
