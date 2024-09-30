@@ -48,7 +48,7 @@ export class GameSchema {
             description: 'Descripción del producto',
             example: 'WIN',
           }),
-          status: z.enum([GameStatus.CREATED, GameStatus.IN_PROGRESS, GameStatus.FINISHED]).optional().openapi({
+          status: z.enum([GameStatus.IN_PROGRESS, GameStatus.FINISHED]).optional().openapi({
             description: 'Estado de la partida',
             example: 'FINISHED',
           }),
