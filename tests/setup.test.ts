@@ -10,7 +10,7 @@ afterAll((done) => {
 });
 
 // TODO: CREATE TESTS
-describe('CATEGORY', () => {
+describe('SETUP', () => {
   it('should pass a basic truthy test', () => {
     expect(true).toBe(true);
   });

@@ -5,7 +5,6 @@ const prisma = new PrismaClient();
 
 export const connectDatabase = async (): Promise<void> => {
   try {
-    // Intentar conectarse a la base de datos PostgreSQL
     await prisma.$connect();
     console.log('Connected to PostgreSQL');
   } catch (error: any) {
@@ -13,5 +12,4 @@ export const connectDatabase = async (): Promise<void> => {
   }
 };
 
-// Exportar la instancia de Prisma para usarla en otros archivos
 export { prisma };

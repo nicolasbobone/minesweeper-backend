@@ -1,6 +1,7 @@
 import cors from 'cors';
-
-const ACCEPTED_ORIGINS = ['http://localhost:3000', 'http://localhost:5173'];
+import { env } from 'process';
+const urlApi = env.URL_API;
+const ACCEPTED_ORIGINS = [`${urlApi}:3000`, `${urlApi}:4200`];
 
 export const corsMiddleware = ({ acceptedOrigins = ACCEPTED_ORIGINS } = {}) =>
   cors({

@@ -23,11 +23,10 @@ export class AuthService {
 
       user.password = await PasswordHandler.encrypt(user.password);
 
-      const result = (await table.create({ data: user })) as Partial<User>;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { password, ...newUser } = (await table.create({ data: user })) as Partial<User>;
 
-      delete result.password;
-
-      return result;
+      return newUser;
     } catch (error: any) {
       if (error instanceof AuthenticationError) {
         throw error;
@@ -37,7 +36,9 @@ export class AuthService {
     }
   }
 
-  static async login(credentials: Auth): Promise<{ user: Partial<User>; token: string }> {
+  static async login(
+    credentials: Auth,
+  ): Promise<{ accessToken: { token: string; expiresIn: number }; refreshToken: string }> {
     try {
       const userExist = await table.findUnique({
         where: {
@@ -50,19 +51,53 @@ export class AuthService {
 
       const checkLogin = await PasswordHandler.verify(credentials.password, userExist.password);
 
-      const user = userExist as Partial<User>;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { password, ...user } = userExist as Partial<User>;
 
-      delete user.password;
       if (!checkLogin) {
         throw new AuthenticationError('Password incorrect');
       }
 
-      const token = JwtHandler.generate(user);
+      const { token, expiresIn } = JwtHandler.generateAccessToken(user);
 
-      return {
-        user,
-        token,
+      const refreshToken = JwtHandler.generateRefreshToken(user);
+
+      const result = {
+        accessToken: {
+          token,
+          expiresIn: Date.now() + expiresIn * 1000,
+        },
+        refreshToken,
       };
+
+      return result;
+    } catch (error: any) {
+      if (error instanceof AuthenticationError) {
+        throw error;
+      } else {
+        throw new DatabaseError('Failed login user', error);
+      }
+    }
+  }
+
+  static async refreshToken(id: number): Promise<{ token: string; expiresIn: number }> {
+    try {
+      const userExist = await table.findUnique({
+        where: {
+          id,
+        },
+      });
+
+      if (!userExist) {
+        throw new AuthenticationError('User not exist');
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { password, ...user } = userExist as Partial<User>;
+
+      const { token, expiresIn } = JwtHandler.generateAccessToken(user);
+
+      return { token, expiresIn: Date.now() + expiresIn * 1000 };
     } catch (error: any) {
       if (error instanceof AuthenticationError) {
         throw error;

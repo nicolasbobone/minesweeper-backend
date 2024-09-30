@@ -12,7 +12,24 @@ export class AuthController {
 
   static async login(req: RequestAuth, res: Response) {
     const { body } = req;
-    const user = await AuthService.login(body);
-    response(res, user);
+    const { accessToken, refreshToken } = await AuthService.login(body);
+    res.cookie('refresh_token', refreshToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'strict',
+      maxAge: 60 * 60 * 1000 * 7 * 24,
+    });
+    response(res, { ...accessToken });
+  }
+
+  static async refreshToken(req: RequestAuth, res: Response) {
+    const id = req.user!.id!;
+    const access = await AuthService.refreshToken(id);
+    response(res, access);
+  }
+
+  static async logout(req: RequestAuth, res: Response) {
+    res.clearCookie('refresh_token');
+    response(res, { message: 'Logout success' });
   }
 }

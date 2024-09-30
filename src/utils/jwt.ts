@@ -4,15 +4,33 @@ import { AuthenticationError } from '../errors/authentication';
 import { User } from '../interfaces/user';
 
 export class JwtHandler {
-  static generate(user: Partial<User>) {
-    return sign(user, env.jwtSecret, {
-      expiresIn: '2h',
-    });
+  static generateAccessToken(user: Partial<User>) {
+    try {
+      const expiresIn = 30 * 60 * 1000;
+      const token = sign(user, env.jwtAccessSecret!, {
+        expiresIn,
+      });
+
+      return { token, expiresIn };
+    } catch (error) {
+      throw new Error('Failed to generate access token');
+    }
   }
 
-  static verify(token: string) {
+  static generateRefreshToken(user: Partial<User>) {
     try {
-      return verify(token, env.jwtSecret);
+      return sign(user, env.jwtRefreshSecret!, {
+        expiresIn: 60 * 60 * 1000 * 24 * 7,
+      });
+    } catch (error) {
+      throw new Error('Failed to generate refresh token');
+    }
+  }
+
+  static verify(token: string, type: 'access' | 'refresh' = 'access') {
+    try {
+      const secret = type === 'access' ? env.jwtAccessSecret! : env.jwtRefreshSecret!;
+      return verify(token, secret);
     } catch (error: any) {
       if (error instanceof TokenExpiredError) {
         throw new AuthenticationError('Token has expired');

@@ -1,37 +1,36 @@
 import { Response } from 'express';
 import { RequestAuth } from '../interfaces/request-auth';
 import { response } from '../middleware/response';
-import { ProductService } from '../services/product';
+import { CellService } from '../services/cell';
 
-export class ProductController {
+export class CellController {
   static async getAll(req: RequestAuth, res: Response) {
     const { body } = req;
-    const products = await ProductService.getAll(body);
-    response(res, products);
+    const cells = await CellService.getAll(body);
+    response(res, cells);
   }
 
   static async getById(req: RequestAuth, res: Response) {
     const { id } = req.params;
-    const product = await ProductService.getById({ id });
-    response(res, product);
+    const cell = await CellService.getById({ id });
+    response(res, cell);
   }
 
   static async create(req: RequestAuth, res: Response) {
     const { body } = req;
-    const newProduct = await ProductService.create(body);
-    response(res, newProduct, 201);
+    const newCell = await CellService.create(body);
+    response(res, newCell, 201);
   }
 
   static async update(req: RequestAuth, res: Response) {
-    const { id } = req.params;
     const { body } = req;
-    const product = await ProductService.update({ id }, body);
-    response(res, product);
+    const cell = await CellService.update(body);
+    response(res, cell);
   }
 
   static async delete(req: RequestAuth, res: Response) {
     const { id } = req.params;
-    const product = await ProductService.delete({ id });
-    response(res, product);
+    const cell = await CellService.delete({ id });
+    response(res, cell);
   }
 }

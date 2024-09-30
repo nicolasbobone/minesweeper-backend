@@ -1,4 +1,4 @@
-# FlickBox Backend
+# Minesweeper Backend
 
 Este es el backend de una aplicación de comercio electrónico desarrollado con Node.js, TypeScript y Prisma. Provee la API para la autenticación de usuarios, la gestión de productos, el carrito de compras y la documentación con Swagger.
 
